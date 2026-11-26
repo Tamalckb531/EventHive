@@ -3,7 +3,7 @@ import jwt, {type SignOptions } from "jsonwebtoken";
 import { AppError } from "../../utils/AppError";
 import { authRepository} from "./auth.repository"
 import config from "../../config";
-import type { loginSchemaType, signupSchemaType } from "../../utils/shcema";
+import type { loginSchemaType, signupSchemaType } from "./auth.schema";
 
 const LoginServiceFunction = async (payload: loginSchemaType) => { 
     const { email, password } = payload;

@@ -1,6 +1,6 @@
 import { pool } from "../../db"
-import type { signupSchemaType } from "../../utils/shcema";
-import type { User } from "../../utils/type";
+import type { signupSchemaType } from "./auth.schema";
+import type { User } from "./auth.type";
 
 const dbUser = async (email: string):Promise<User | null> => { 
     const user = await pool.query(

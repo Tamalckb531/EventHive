@@ -1,6 +1,7 @@
 import express, { type Application, type Request, type Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import globalErrorHandler from "./middleware/globalErrorHandler";
 const app: Application = express();
 
 const corsOptions = {
@@ -22,5 +23,8 @@ app.get("/", (req: Request, res: Response) => {
     author: "Tamal",
   });
 });
+
+// Global Error Handler
+app.use(globalErrorHandler);
 
 export default app;

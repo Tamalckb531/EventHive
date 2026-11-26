@@ -1,10 +1,11 @@
 import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
 import { AppError } from "../../utils/AppError";
+import { createEventSchema } from "./event.schema";
 
 const EventCreateControllerFunction = async (req: Request, res: Response) => {
     try {
-        const payload = Schema.safeParse(req.body);
+        const payload = createEventSchema.safeParse(req.body);
         if (!payload.success) {
             const issue = payload.error.issues[0];
             sendResponse(res, {

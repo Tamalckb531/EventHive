@@ -3,11 +3,9 @@ import jwt, {type SignOptions } from "jsonwebtoken";
 import { AppError } from "../../utils/AppError";
 import { authRepository} from "./auth.repository"
 import config from "../../config";
-interface LoginPayload {
-    email: string,
-    password: string,
-}
-const LoginServiceFunction = async (payload: LoginPayload) => { 
+import type { loginSchemaType, signupSchemaType } from "../../utils/shcema";
+
+const LoginServiceFunction = async (payload: loginSchemaType) => { 
     const { email, password } = payload;
     const user = await authRepository.dbUser(email);
 
@@ -40,7 +38,31 @@ const LoginServiceFunction = async (payload: LoginPayload) => {
         }
     }
 }
+const SignupServiceFunction = async (payload: signupSchemaType) => { 
+    const userExist = await authRepository.dbUser(payload.email);
+
+    if (userExist) {
+        throw new AppError("email already registered",409);
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(payload.password, saltRounds);
+
+    const user = await authRepository.insertUser({...payload, password:hashedPassword})
+
+    return {
+        data: {
+            id:user.id,
+            name:user.name,
+            email:user.email,
+            role: user.role,
+            created_at:user.created_at,
+            updated_at:user.updated_at,
+        }
+    }
+}
 
 export const authService = {
-    LoginServiceFunction
+    LoginServiceFunction,
+    SignupServiceFunction
 }

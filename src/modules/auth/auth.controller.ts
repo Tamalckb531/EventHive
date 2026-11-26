@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
-import { loginSchema } from "../../utils/shcema";
+import { loginSchema, signupSchema } from "../../utils/shcema";
 import { authService } from "./auth.service";
 
 const LoginControllerFunction = async (req: Request, res: Response) => {
@@ -39,7 +39,7 @@ const LoginControllerFunction = async (req: Request, res: Response) => {
 
 const SignupControllerFunction = async (req: Request, res: Response) => {
     try {
-        const payload = loginSchema.safeParse(req.body);
+        const payload = signupSchema.safeParse(req.body);
         if (!payload.success) {
             const issue = payload.error.issues[0];
             sendResponse(res, {
@@ -50,23 +50,19 @@ const SignupControllerFunction = async (req: Request, res: Response) => {
             });
             return;
         }
-        const result = await authService.LoginServiceFunction(payload.data);
-        const data = {
-            "token": result.token,
-            "user": result.data
-        }
+        const result = await authService.SignupServiceFunction(payload.data);
         sendResponse(res, {
-            statusCode: 200,
+            statusCode: 201,
             success: true,
-            message: "Login successful",
-            data: data,
+            message: "User registered successfully",
+            data: result.data,
         });
     } catch (error: any) {
         sendResponse(res, {
             statusCode: error.statusCode || 500,
             success: false,
             message: error?.message || "Internal Server Error",
-            errors: [{ field: "login", message: error?.message || "Internal Server Error" }],
+            errors: [{ field: "signup", message: error?.message || "Internal Server Error" }],
         });
     }
 }

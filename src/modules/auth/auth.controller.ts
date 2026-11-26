@@ -11,7 +11,7 @@ const LoginControllerFunction = async (req: Request, res: Response) => {
             sendResponse(res, {
                 statusCode: 400,
                 success: false,
-                message: "Validation Failed",
+                message: "validation failure",
                 errors: [{ field: String(issue?.path[0] ?? ""), message: issue?.message }],
             });
             return;
@@ -31,8 +31,8 @@ const LoginControllerFunction = async (req: Request, res: Response) => {
         sendResponse(res, {
             statusCode: error.statusCode || 500,
             success: false,
-            message: error?.message,
-            errors: error,
+            message: error?.message || "Internal Server Error",
+            errors: [{ field: "login", message: error?.message || "Internal Server Error" }],
         });
     }
 }

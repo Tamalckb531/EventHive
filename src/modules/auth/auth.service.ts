@@ -12,13 +12,13 @@ const LoginServiceFunction = async (payload: LoginPayload) => {
     const user = await authRepository.dbUser(email);
 
     if (!user) {
-        throw new AppError("Invalid Credentials",401);
+        throw new AppError("invalid email or password",401);
     }
 
     const matchPassword = await bcrypt.compare(password, user.password);
 
     if (!matchPassword) {
-        throw new AppError("Invalid Credentials", 401);
+        throw new AppError("invalid email or password", 401);
     }
 
     const jwtPayload = {

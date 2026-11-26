@@ -1,9 +1,12 @@
-import { createServer } from "node:http";
+import app from "./app";
+import config from "./config";
+import { initDB } from "./db";
 
-const server = createServer((req, res) => {
-    console.log(req);
-})
+const main = async () => {
+  initDB();
+  app.listen(config.port, () => {
+    console.log(`The Express server is running on the port ${config.port}`);
+  });
+};
 
-server.listen(5000, () => {
-    console.log("server is running")
-})
+main();

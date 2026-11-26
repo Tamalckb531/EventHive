@@ -7,12 +7,12 @@ const LoginControllerFunction = async (req: Request, res: Response) => {
     try {
         const payload = loginSchema.safeParse(req.body);
         if (!payload.success) {
-            const error = payload.error.issues[0];
+            const issue = payload.error.issues[0];
             sendResponse(res, {
                 statusCode: 400,
                 success: false,
-                message: error?.message || "Payload Validation Failed",
-                error: error,
+                message: "Validation Failed",
+                errors: [{ field: String(issue?.path[0] ?? ""), message: issue?.message }],
             });
             return;
         }
@@ -22,7 +22,7 @@ const LoginControllerFunction = async (req: Request, res: Response) => {
             "user": result.data
         }
         sendResponse(res, {
-            statusCode: 400,
+            statusCode: 200,
             success: true,
             message: "Login successful",
             data: data,
@@ -32,7 +32,7 @@ const LoginControllerFunction = async (req: Request, res: Response) => {
             statusCode: error.statusCode || 500,
             success: false,
             message: error?.message,
-            error: error,
+            errors: error,
         });
     }
 }

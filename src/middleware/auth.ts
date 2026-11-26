@@ -59,7 +59,12 @@ export const auth = (errMessage?:string, ...roles: Role[]) => {
             req.user = decode;
             next();
         } catch (error) {
-            next(error);
+            sendResponse(res, {
+                statusCode: 401,
+                success: false,
+                message: "invalid token"
+            });
+            return;
         }
     }
 }

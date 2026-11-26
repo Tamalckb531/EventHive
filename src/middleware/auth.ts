@@ -5,7 +5,7 @@ import sendResponse from "../utils/sendResponse";
 import config from "../config";
 import { authRepository } from "../modules/auth/auth.repository";
 
-const auth = (errMessage?:string, ...roles: Role[]) => {
+export const auth = (errMessage?:string, ...roles: Role[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
             const authHeader = req.headers.authorization;

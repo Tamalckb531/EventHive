@@ -3,9 +3,15 @@ import sendResponse from "../../utils/sendResponse";
 import { AppError } from "../../utils/AppError";
 import { createEventSchema } from "./event.schema";
 
+interface ReqUser{
+    id: number,
+    role:string
+}
+
 const EventCreateControllerFunction = async (req: Request, res: Response) => {
     try {
         const payload = createEventSchema.safeParse(req.body);
+        const user = req.user as ReqUser;
         if (!payload.success) {
             const issue = payload.error.issues[0];
             sendResponse(res, {
@@ -16,15 +22,12 @@ const EventCreateControllerFunction = async (req: Request, res: Response) => {
             });
             return;
         }
-        const result = await eventService.LoginServiceFunction(payload.data);
-        const data = {
-            "user": result.data
-        }
+        const result = await eventService.CreteEventServiceFunction(payload.data, user.id);
         sendResponse(res, {
-            statusCode: 200,
+            statusCode: 201,
             success: true,
-            message: "Login successful",
-            data: data,
+            message: "Event created successfully",
+            data: result,
         });
     } catch (error: any) {
         const isAppError = error instanceof AppError;

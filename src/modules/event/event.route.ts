@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { eventController } from "./event.controller";
+import { USER_ROLE } from "../../utils/type";
+import { auth } from "../../middleware/auth";
 
 const router = Router();
 
-router.post("/", eventController.EventCreateControllerFunction)
+router.post("/", auth("caller is not an organizer",USER_ROLE.organizer), eventController.EventCreateControllerFunction)
 export const eventRoute = router;

@@ -4,4 +4,4 @@ import { eventController } from "./event.controller";
 const router = Router();
 
 router.post("/", eventController.EventCreateControllerFunction)
-export const authRoute = router;
+export const eventRoute = router;

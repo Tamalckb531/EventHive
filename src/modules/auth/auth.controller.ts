@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
 import { loginSchema, signupSchema } from "../../utils/shcema";
 import { authService } from "./auth.service";
+import { AppError } from "../../utils/AppError";
 
 const LoginControllerFunction = async (req: Request, res: Response) => {
     try {
@@ -28,11 +29,11 @@ const LoginControllerFunction = async (req: Request, res: Response) => {
             data: data,
         });
     } catch (error: any) {
+        const isAppError = error instanceof AppError;
         sendResponse(res, {
-            statusCode: error.statusCode || 500,
+            statusCode: isAppError ? error.statusCode : 500,
             success: false,
-            message: error?.message || "Internal Server Error",
-            errors: [{ field: "login", message: error?.message || "Internal Server Error" }],
+            message: isAppError? error.message : "Internal Server Error",
         });
     }
 }
@@ -58,11 +59,11 @@ const SignupControllerFunction = async (req: Request, res: Response) => {
             data: result.data,
         });
     } catch (error: any) {
+        const isAppError = error instanceof AppError;
         sendResponse(res, {
-            statusCode: error.statusCode || 500,
+            statusCode: isAppError ? error.statusCode : 500,
             success: false,
-            message: error?.message || "Internal Server Error",
-            errors: [{ field: "signup", message: error?.message || "Internal Server Error" }],
+            message: isAppError? error.message : "Internal Server Error",
         });
     }
 }

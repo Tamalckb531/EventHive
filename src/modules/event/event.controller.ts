@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
 import { AppError } from "../../utils/AppError";
 import { createEventSchema } from "./event.schema";
+import { eventService } from "./event.service";
 
 interface ReqUser{
     id: number,
@@ -22,7 +23,7 @@ const EventCreateControllerFunction = async (req: Request, res: Response) => {
             });
             return;
         }
-        const result = await eventService.CreteEventServiceFunction(payload.data, user.id);
+        const result = await eventService.CreateEventServiceFunction(payload.data, user.id);
         sendResponse(res, {
             statusCode: 201,
             success: true,

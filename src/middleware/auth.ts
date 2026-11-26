@@ -34,9 +34,9 @@ export const auth = (errMessage?:string, ...roles: Role[]) => {
             const decode = jwt.verify(
                 token as string,
                 config.jwt_secret,
-            ) as JwtPayload;
+            ) as {id:number, role:string};
 
-            const user = await authRepository.dbUser(decode.email);
+            const user = await authRepository.searchUserById(decode.id);
 
             if (!user) {
                 sendResponse(res, {
@@ -57,6 +57,7 @@ export const auth = (errMessage?:string, ...roles: Role[]) => {
             }
 
             req.user = decode;
+            next();
         } catch (error) {
             next(error);
         }

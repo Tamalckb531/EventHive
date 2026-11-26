@@ -18,7 +18,7 @@ app.use(express.json());
 
 //? routes
 app.use("/api/v1/auth", authRoute)
-app.use("/api/v1/event", eventRoute)
+app.use("/api/v1/events", eventRoute)
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({

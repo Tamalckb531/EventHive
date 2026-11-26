@@ -10,6 +10,14 @@ const dbUser = async (email: string):Promise<User | null> => {
     return user.rows[0] ?? null;
 }
 
+const searchUserById = async (id: number): Promise<User | null> => { 
+    const user = await pool.query(
+        `SELECT * FROM users WHERE id=$1`,
+        [id]
+    );
+    return user.rows[0] ?? null;
+}
+
 const insertUser = async (payload: signupSchemaType): Promise<User> => { 
     const { name, email, password, role} = payload
     const user = await pool.query(
@@ -23,5 +31,5 @@ const insertUser = async (payload: signupSchemaType): Promise<User> => {
 }
 
 export const authRepository = {
-    dbUser,insertUser
+    dbUser,insertUser,searchUserById
 }

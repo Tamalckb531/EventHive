@@ -8,3 +8,20 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS events (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    date TIMESTAMP NOT NULL,
+    location TEXT NOT NULL,
+    total_seats INTEGER NOT NULL CHECK (total_seats > 0),
+    available_seats INTEGER NOT NULL CHECK (
+        available_seats >= 0 AND available_seats <= total_seats
+    ),
+    price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
+    organizer_id INTEGER NOT NULL REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);

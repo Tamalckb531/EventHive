@@ -1,6 +1,8 @@
 import express, { type Application, type Request, type Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import globalErrorHandler from "./middleware/globalErrorHandler";
+import { authRoute } from "./modules/auth/auth.route";
 const app: Application = express();
 
 const corsOptions = {
@@ -12,8 +14,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.text());
-app.use(express.urlencoded({ extended: true }));
+
+//? routes
+app.use("/api/v1/auth", authRoute)
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
@@ -22,5 +25,8 @@ app.get("/", (req: Request, res: Response) => {
     author: "Tamal",
   });
 });
+
+// Global Error Handler
+app.use(globalErrorHandler);
 
 export default app;

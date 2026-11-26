@@ -1,22 +1,21 @@
 import { Pool } from "pg";
 import config from "../config";
+import { resolve } from "node:path";
+import { readFile } from "node:fs/promises";
 
 export const pool = new Pool({
   connectionString: config.connection_string,
 });
-// console.log(pool);
 
 export const initDB = async () => {
-  try {
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS users(
-      id SERIAL PRIMARY KEY,
-
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
-      );
-    `);
-    console.log("Database connected!!");
+    try {
+      
+        const schema = await readFile(
+            resolve(process.cwd(), "schema.sql"),
+            "utf-8"
+        )
+        await pool.query(schema);
+        console.log("Database connected!!");
   } catch (error) {
     console.log(error);
   }

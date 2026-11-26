@@ -1,0 +1,4 @@
+node_modules
+dist
+
+touch event.route.ts event.service.ts event.repository.ts event.controller.ts

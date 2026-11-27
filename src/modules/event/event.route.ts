@@ -7,4 +7,5 @@ const router = Router();
 
 router.post("/", auth("caller is not an organizer",USER_ROLE.organizer), eventController.EventCreateControllerFunction)
 router.get("/", eventController.EventGetControllerFunction)
+router.get("/:id", eventController.EventGetOneControllerFunction)
 export const eventRoute = router;

@@ -58,8 +58,28 @@ const EventGetControllerFunction = async (req: Request, res: Response) => {
         });
     }
 }
+const EventGetOneControllerFunction = async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id);
+        const result = await eventService.GetOneEventServiceFunction(id);
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: "Event retrieved successfully",
+            data: result,
+        });
+    } catch (error: any) {
+        const isAppError = error instanceof AppError;
+        sendResponse(res, {
+            statusCode: isAppError ? error.statusCode : 500,
+            success: false,
+            message: isAppError? error.message : "Internal Server Error",
+        });
+    }
+}
 
 export const eventController = {
     EventCreateControllerFunction,
-    EventGetControllerFunction
+    EventGetControllerFunction,
+    EventGetOneControllerFunction
 }

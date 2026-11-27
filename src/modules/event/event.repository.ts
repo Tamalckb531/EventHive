@@ -1,6 +1,6 @@
 import { type createEventSchemaType } from './event.schema';
 import { pool } from "../../db"
-import type { Event } from './event.type';
+import type { Event, EventWithOrganizer } from './event.type';
 
 const createEvent = async (
   payload: createEventSchemaType,
@@ -43,7 +43,26 @@ const getEvent = async (
 
   return result.rows;
 };
+
+const getOneEvent = async (id: number): Promise<EventWithOrganizer | null> => {
+  const result = await pool.query(
+    `SELECT 
+        e.*,
+        json_build_object(
+            'id', u.id,
+            'name', u.name,
+            'email', u.email
+        ) AS organizer
+     FROM events e
+     JOIN users u ON e.organizer_id = u.id
+     WHERE e.id = $1`,
+    [id]
+  );
+
+  return result.rows[0] ?? null;
+};
 export const eventRepository = {
     createEvent,
-    getEvent
+    getEvent,
+    getOneEvent
 }

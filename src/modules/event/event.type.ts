@@ -12,3 +12,10 @@ export interface Event {
   created_at: Date;
   updated_at: Date;
 }
+export interface EventWithOrganizer extends Event {
+  organizer: {
+    id: number;
+    name: string;
+    email: string
+  };
+}

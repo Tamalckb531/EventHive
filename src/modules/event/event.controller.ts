@@ -61,6 +61,9 @@ const EventGetControllerFunction = async (req: Request, res: Response) => {
 const EventGetOneControllerFunction = async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id);
+        if (!Number.isInteger(id) || id <= 0) {
+            throw new AppError("Invalid event ID", 400);
+        }
         const result = await eventService.GetOneEventServiceFunction(id);
         sendResponse(res, {
             statusCode: 200,

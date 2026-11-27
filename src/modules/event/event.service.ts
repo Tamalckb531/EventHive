@@ -16,8 +16,17 @@ const GetEventServiceFunction = async (search:string|undefined) => {
     return result;
 }
 
+const GetOneEventServiceFunction = async (id:number) => { 
+    const result = await eventRepository.getOneEvent(id);
+    if (!result) {
+        throw new AppError("Event not found", 404);
+    }
+    return result;
+}
+
 
 export const eventService = {
     CreateEventServiceFunction,
-    GetEventServiceFunction
+    GetEventServiceFunction,
+    GetOneEventServiceFunction
 }

@@ -8,5 +8,6 @@ const router = Router();
 router.post("/", auth("caller is not an organizer",USER_ROLE.organizer), eventController.EventCreateControllerFunction)
 router.get("/", eventController.EventGetControllerFunction)
 router.get("/:id", eventController.EventGetOneControllerFunction)
-router.patch("/:id", auth("",USER_ROLE.organizer), eventController.EventUpdateControllerFunction)
+router.patch("/:id", auth("caller is not an organizer",USER_ROLE.organizer), eventController.EventUpdateControllerFunction)
+router.delete("/:id", auth("caller is not an organizer",USER_ROLE.organizer), eventController.EventDeleteControllerFunction)
 export const eventRoute = router;

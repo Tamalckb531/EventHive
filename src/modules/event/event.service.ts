@@ -33,10 +33,18 @@ const UpdateEventServiceFunction = async (
   return result;
 };
 
+const DeleteEventServiceFunction = async (
+  id: number,
+  userId: number
+) => {
+  await eventRepository.deleteEvent(id,userId);
+};
+
 
 export const eventService = {
     CreateEventServiceFunction,
     GetEventServiceFunction,
     GetOneEventServiceFunction,
-    UpdateEventServiceFunction
+    UpdateEventServiceFunction,
+    DeleteEventServiceFunction
 }

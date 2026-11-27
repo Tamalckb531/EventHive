@@ -120,10 +120,38 @@ const EventUpdateControllerFunction = async (req: Request,res: Response) => {
         });
     }
 };
+const EventDeleteControllerFunction = async (req: Request,res: Response) => {
+    try {
+        const id = Number(req.params.id);
+        const user = req.user as ReqUser;
+
+        if (!Number.isInteger(id) || id <= 0) {
+            throw new AppError("Invalid event ID", 400);
+        }
+
+        await eventService.DeleteEventServiceFunction(id, user.id);
+
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: "Event deleted successfully",
+            data: null,
+        });
+        } catch (error: any) {
+        const isAppError = error instanceof AppError;
+
+        sendResponse(res, {
+            statusCode: isAppError ? error.statusCode : 500,
+            success: false,
+            message: isAppError ? error.message : "Internal Server Error",
+        });
+    }
+};
 
 export const eventController = {
     EventCreateControllerFunction,
     EventGetControllerFunction,
     EventGetOneControllerFunction,
-    EventUpdateControllerFunction
+    EventUpdateControllerFunction,
+    EventDeleteControllerFunction
 }

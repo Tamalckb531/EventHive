@@ -1,7 +1,6 @@
-import { AppError } from "../../utils/AppError";
 import { bookingsRepository } from "./booking.repository";
 import type { CreateBookingSchemaType } from "./booking.schema";
-import type { Booking } from "./booking.type";
+import type { Booking, UserBooking } from "./booking.type";
 
 
 const CreateBookingServiceFunction = async (
@@ -12,7 +11,14 @@ const CreateBookingServiceFunction = async (
     return result;
 };
 
+const GetUserBookingsServiceFunction = async (
+  userId: number
+): Promise<UserBooking[]> => {
+    const result = await bookingsRepository.getUserBookings(userId);
+    return result;
+};
 
 export const bookingsService = {
-    CreateBookingServiceFunction
+    CreateBookingServiceFunction,
+    GetUserBookingsServiceFunction
 }

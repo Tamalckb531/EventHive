@@ -2,7 +2,7 @@ import { pool } from "../../db"
 import { AppError } from '../../utils/AppError';
 import type { Event } from "../event/event.type";
 import type { CreateBookingSchemaType } from "./booking.schema";
-import type { Booking } from "./booking.type";
+import type { Booking, UserBooking } from "./booking.type";
 
 const createBooking = async (
   payload: CreateBookingSchemaType,
@@ -83,6 +83,33 @@ const createBooking = async (
     }
 };
 
+const getUserBookings = async (
+  userId: number
+): Promise<UserBooking[]> => {
+  const result = await pool.query<UserBooking>(
+    `SELECT
+      b.id,
+      json_build_object(
+        'id', e.id,
+        'title', e.title,
+        'date', e.date,
+        'location', e.location
+      ) AS event,
+      b.tickets_booked,
+      b.total_price,
+      b.status,
+      b.created_at
+    FROM bookings b
+    JOIN events e ON b.event_id = e.id
+    WHERE b.attendee_id = $1
+    ORDER BY b.created_at DESC`,
+    [userId]
+  );
+
+  return result.rows;
+};
 export const bookingsRepository = {
-    createBooking
+    createBooking,
+    getUserBookings
 }
+

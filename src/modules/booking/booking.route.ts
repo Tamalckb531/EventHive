@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { USER_ROLE } from "../../utils/type";
 import { auth } from "../../middleware/auth";
+import { bookingsController } from "./booking.controller";
 
 const router = Router();
 
-router.post("/", auth("caller is not an organizer",USER_ROLE.organizer), bookingController.BookingCreateControllerFunction)
+router.post("/", auth("",USER_ROLE.organizer, USER_ROLE.attendee), bookingsController.BookingCreateControllerFunction)
 export const bookingRoute = router;

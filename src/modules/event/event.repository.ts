@@ -187,11 +187,11 @@ const deleteEvent = async (id: number, userId: number): Promise<void> => {
       `SELECT EXISTS (
         SELECT 1 FROM bookings
         WHERE event_id = $1 AND status = 'confirmed'
-      ) AS has_confirm_bookings`,
+      ) AS has_confirmed_bookings`,
       [id]
     );
 
-    if (bookingResult.rows[0].has_confirm_bookings) {
+    if (bookingResult.rows[0].has_confirmed_bookings) {
       throw new AppError(
         "event has confirmed bookings",
         400

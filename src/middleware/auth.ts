@@ -51,7 +51,7 @@ export const auth = (errMessage?:string, ...roles: Role[]) => {
                 sendResponse(res, {
                     statusCode: 403,
                     success: false,
-                    message: errMessage || "role didn't match",
+                    message: errMessage || "Unauthorized",
                 });
                 return;
             }

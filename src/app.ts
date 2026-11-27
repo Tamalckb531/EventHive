@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import globalErrorHandler from "./middleware/globalErrorHandler";
 import { authRoute } from "./modules/auth/auth.route";
+import { eventRoute } from "./modules/event/event.route";
 const app: Application = express();
 
 const corsOptions = {
@@ -17,6 +18,7 @@ app.use(express.json());
 
 //? routes
 app.use("/api/v1/auth", authRoute)
+app.use("/api/v1/events", eventRoute)
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({

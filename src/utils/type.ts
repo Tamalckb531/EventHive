@@ -1,11 +1,7 @@
-export type UserRole = "attendee" | "organizer";
+export type Role = "attendee" | "organizer";
 
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  role: UserRole;
-  created_at: Date;
-  updated_at: Date;
-}
+
+export const USER_ROLE = {
+  attendee: "attendee",
+  organizer: "organizer",
+} as const;

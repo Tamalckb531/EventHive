@@ -1,11 +1,19 @@
 import { pool } from "../../db"
-import type { signupSchemaType } from "../../utils/shcema";
-import type { User } from "../../utils/type";
+import type { signupSchemaType } from "./auth.schema";
+import type { User } from "./auth.type";
 
 const dbUser = async (email: string):Promise<User | null> => { 
     const user = await pool.query(
         `SELECT * FROM users WHERE email=$1`,
         [email]
+    );
+    return user.rows[0] ?? null;
+}
+
+const searchUserById = async (id: number): Promise<User | null> => { 
+    const user = await pool.query(
+        `SELECT * FROM users WHERE id=$1`,
+        [id]
     );
     return user.rows[0] ?? null;
 }
@@ -23,5 +31,5 @@ const insertUser = async (payload: signupSchemaType): Promise<User> => {
 }
 
 export const authRepository = {
-    dbUser,insertUser
+    dbUser,insertUser,searchUserById
 }

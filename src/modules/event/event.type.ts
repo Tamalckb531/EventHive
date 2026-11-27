@@ -1,0 +1,21 @@
+export interface Event {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  date: Date;
+  location: string;
+  total_seats: number;
+  available_seats: number;
+  price: string;
+  organizer_id: number;
+  created_at: Date;
+  updated_at: Date;
+}
+export interface EventWithOrganizer extends Event {
+  organizer: {
+    id: number;
+    name: string;
+    email: string
+  };
+}

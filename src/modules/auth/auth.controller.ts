@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
-import { loginSchema, signupSchema } from "../../utils/shcema";
+import { loginSchema, signupSchema } from "./auth.schema";
 import { authService } from "./auth.service";
 import { AppError } from "../../utils/AppError";
 

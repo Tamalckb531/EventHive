@@ -79,8 +79,8 @@ const updateEvent = async (
 
     const event = await client.query(
       `SELECT * FROM events
-       WHERE id = $1
-       FOR UPDATE`,
+      WHERE id = $1
+      FOR UPDATE`,
       [id]
     );
 
@@ -97,8 +97,8 @@ const updateEvent = async (
     if (payload.total_seats !== undefined) {
       const bookingResult = await client.query(
         `SELECT COALESCE(SUM(tickets_booked), 0) As sold
-         FROM bookings
-         WHERE event_id = $1 AND status = 'confirmed'`,
+        FROM bookings
+        WHERE event_id = $1 AND status = 'confirmed'`,
         [id]
       );
 
@@ -141,9 +141,9 @@ const updateEvent = async (
 
     const result = await client.query<Event>(
       `UPDATE events
-       SET ${setQuery.join(", ")}, updated_at = NOW()
-       WHERE id = $${values.length}
-       RETURNING *`,
+      SET ${setQuery.join(", ")}, updated_at = NOW()
+      WHERE id = $${values.length}
+      RETURNING *`,
       values
     );
 
@@ -157,9 +157,64 @@ const updateEvent = async (
     client.release();
   }
 };
+
+const deleteEvent = async (id: number, userId: number): Promise<void> => {
+  const client = await pool.connect();
+
+  //? USING TRANSACTION : 
+  //? 1. get event by id(if not found or not owner then throw error)
+  //? 2. Check has_confirmed_bookings (if has then throw error)
+  //? 3. Delete event
+  try {
+    await client.query("BEGIN");
+
+    const eventResult = await client.query(
+      `SELECT * FROM events
+      WHERE id = $1
+      FOR UPDATE`,
+      [id]
+    );
+
+    if (eventResult.rows.length === 0) {
+      throw new AppError("event not found", 404);
+    }
+
+    if (eventResult.rows[0].organizer_id !== userId) {
+      throw new AppError("not the owner", 403);
+    }
+
+    const bookingResult = await client.query(
+      `SELECT EXISTS (
+        SELECT 1 FROM bookings
+        WHERE event_id = $1 AND status = 'confirmed'
+      ) AS has_confirm_bookings`,
+      [id]
+    );
+
+    if (bookingResult.rows[0].has_confirm_bookings) {
+      throw new AppError(
+        "event has confirmed bookings",
+        400
+      );
+    }
+
+    await client.query(
+      `DELETE FROM events WHERE id = $1`,
+      [id]
+    );
+
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+};
 export const eventRepository = {
     createEvent,
     getEvent,
     getOneEvent,
-    updateEvent
+    updateEvent,
+    deleteEvent
 }

@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
 import { AppError } from "../../utils/AppError";
 import { createBookingSchema } from "./booking.schema";
+import { bookingsService } from "./booking.service";
 
 interface ReqUser{
     id: number,
@@ -22,7 +23,7 @@ const BookingCreateControllerFunction = async (req: Request, res: Response) => {
             });
             return;
         }
-        const result = await bookingService.CreateBookingServiceFunction(payload.data, user.id);
+        const result = await bookingsService.CreateBookingServiceFunction(payload.data, user.id);
         sendResponse(res, {
             statusCode: 201,
             success: true,

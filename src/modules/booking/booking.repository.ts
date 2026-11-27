@@ -25,51 +25,51 @@ const createBooking = async (
         const { event_id, tickets_booked } = payload;
 
         const eventResult = await client.query<Event>(
-        `SELECT * FROM events
-        WHERE id = $1
-        FOR UPDATE`,
-        [event_id]
+            `SELECT * FROM events
+            WHERE id = $1
+            FOR UPDATE`,
+            [event_id]
         );
 
         const event = eventResult.rows[0];
 
         if (!event) {
-        throw new AppError("event not found", 404);
+            throw new AppError("event not found", 404);
         }
 
         if (event.organizer_id === attendeeId) {
-        throw new AppError("organizer booking own event", 403);
+            throw new AppError("organizer booking own event", 403);
         }
 
         if (new Date(event.date).getTime() <= Date.now()) {
-        throw new AppError("event already passed", 400);
+            throw new AppError("event already passed", 400);
         }
 
         if (event.available_seats < tickets_booked) {
-        throw new AppError("insufficient seats", 400);
+            throw new AppError("insufficient seats", 400);
         }
 
         const totalPrice = Number(event.price) * tickets_booked;
 
         await client.query(
-        `UPDATE events
-        SET available_seats = available_seats - $1,
-            updated_at = NOW()
-        WHERE id = $2`,
-        [tickets_booked, event_id]
+            `UPDATE events
+            SET available_seats = available_seats - $1,
+                updated_at = NOW()
+            WHERE id = $2`,
+            [tickets_booked, event_id]
         );
 
         const bookingResult = await client.query<Booking>(
-        `INSERT INTO bookings (
-            event_id,
-            attendee_id,
-            tickets_booked,
-            total_price,
-            status
-        )
-        VALUES ($1, $2, $3, $4, 'confirmed')
-        RETURNING *`,
-        [event_id, attendeeId, tickets_booked, totalPrice]
+            `INSERT INTO bookings (
+                event_id,
+                attendee_id,
+                tickets_booked,
+                total_price,
+                status
+            )
+            VALUES ($1, $2, $3, $4, 'confirmed')
+            RETURNING *`,
+            [event_id, attendeeId, tickets_booked, totalPrice]
         );
 
         await client.query("COMMIT");

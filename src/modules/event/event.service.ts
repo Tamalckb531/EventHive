@@ -1,6 +1,6 @@
 import { AppError } from "../../utils/AppError";
 import { eventRepository } from "./event.repository";
-import type { createEventSchemaType } from './event.schema';
+import type { createEventSchemaType, updateEventSchemaType } from './event.schema';
 
 
 const CreateEventServiceFunction = async (payload: createEventSchemaType, userId:number) => { 
@@ -24,9 +24,19 @@ const GetOneEventServiceFunction = async (id:number) => {
     return result;
 }
 
+const UpdateEventServiceFunction = async (
+  id: number,
+  payload: updateEventSchemaType,
+  userId: number
+) => {
+  const result = await eventRepository.updateEvent(id, payload, userId);
+  return result;
+};
+
 
 export const eventService = {
     CreateEventServiceFunction,
     GetEventServiceFunction,
-    GetOneEventServiceFunction
+    GetOneEventServiceFunction,
+    UpdateEventServiceFunction
 }

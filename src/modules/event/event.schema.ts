@@ -19,4 +19,9 @@ export const eventQuerySchema = z.object({
   search: z.string().optional().catch(undefined),
 });
 
+export const updateEventSchema = createEventSchema.partial().refine(
+    (data) => Object.keys(data).length > 0,
+    "empty body"
+  );
 export type createEventSchemaType = z.infer<typeof createEventSchema>;
+export type updateEventSchemaType = z.infer<typeof updateEventSchema>;

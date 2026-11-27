@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
 import { AppError } from "../../utils/AppError";
-import { createEventSchema, eventQuerySchema } from "./event.schema";
+import { createEventSchema, eventQuerySchema, updateEventSchema } from "./event.schema";
 import { eventService } from "./event.service";
 
 interface ReqUser{
@@ -80,9 +80,50 @@ const EventGetOneControllerFunction = async (req: Request, res: Response) => {
         });
     }
 }
+const EventUpdateControllerFunction = async (req: Request,res: Response) => {
+    try {
+        const id = Number(req.params.id);
+        const user = req.user as ReqUser;
+
+        if (!Number.isInteger(id) || id <= 0) {
+            throw new AppError("Invalid event ID", 400);
+        }
+
+        const payload = updateEventSchema.safeParse(req.body);
+
+        if (!payload.success) {
+            const issue = payload.error.issues[0];
+            sendResponse(res, {
+                statusCode: 400,
+                success: false,
+                message: "validation failure",
+                errors: [{ field: String(issue?.path[0] ?? ""), message: issue?.message }],
+            });
+            return;
+        }
+
+        const result = await eventService.UpdateEventServiceFunction(id, payload.data, user.id);
+
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: "Event updated successfully",
+            data: result,
+        });
+        } catch (error: any) {
+        const isAppError = error instanceof AppError;
+
+        sendResponse(res, {
+            statusCode: isAppError ? error.statusCode : 500,
+            success: false,
+            message: isAppError ? error.message : "Internal Server Error",
+        });
+    }
+};
 
 export const eventController = {
     EventCreateControllerFunction,
     EventGetControllerFunction,
-    EventGetOneControllerFunction
+    EventGetOneControllerFunction,
+    EventUpdateControllerFunction
 }

@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
 import { AppError } from "../../utils/AppError";
+import { createBookingSchema } from "./booking.schema";
 
 interface ReqUser{
     id: number,
@@ -9,7 +10,7 @@ interface ReqUser{
 
 const BookingCreateControllerFunction = async (req: Request, res: Response) => {
     try {
-        const payload = createEventSchema.safeParse(req.body);
+        const payload = createBookingSchema.safeParse(req.body);
         const user = req.user as ReqUser;
         if (!payload.success) {
             const issue = payload.error.issues[0];
@@ -25,7 +26,7 @@ const BookingCreateControllerFunction = async (req: Request, res: Response) => {
         sendResponse(res, {
             statusCode: 201,
             success: true,
-            message: "Event created successfully",
+            message: "Tickets booked successfully",
             data: result,
         });
     } catch (error: any) {

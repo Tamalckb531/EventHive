@@ -40,6 +40,33 @@ const BookingCreateControllerFunction = async (req: Request, res: Response) => {
     }
 }
 
+const BookingsGetControllerFunction = async (
+  req: Request,
+  res: Response
+) => {
+    try {
+        const user = req.user as ReqUser;
+
+        const result = await bookingsService.GetUserBookingsServiceFunction(user.id);
+
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: "Bookings retrieved successfully",
+            data: result,
+        });
+    } catch (error: any) {
+        const isAppError = error instanceof AppError;
+
+        sendResponse(res, {
+            statusCode: isAppError ? error.statusCode : 500,
+            success: false,
+            message: isAppError ? error.message : "Internal Server Error",
+        });
+    }
+};
+
 export const bookingsController = {
-    BookingCreateControllerFunction
+    BookingCreateControllerFunction,
+    BookingsGetControllerFunction
 }

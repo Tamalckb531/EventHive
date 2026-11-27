@@ -15,5 +15,8 @@ export const createEventSchema = z.object({
       "Price can have at most 2 decimal places"
     ),
 });
+export const eventQuerySchema = z.object({
+  search: z.string().optional().catch(undefined),
+});
 
 export type createEventSchemaType = z.infer<typeof createEventSchema>;

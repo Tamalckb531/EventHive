@@ -6,5 +6,5 @@ import { auth } from "../../middleware/auth";
 const router = Router();
 
 router.post("/", auth("caller is not an organizer",USER_ROLE.organizer), eventController.EventCreateControllerFunction)
-router.post("/", eventController.EventGetControllerFunction)
+router.get("/", eventController.EventGetControllerFunction)
 export const eventRoute = router;

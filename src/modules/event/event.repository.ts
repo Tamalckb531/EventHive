@@ -31,6 +31,19 @@ const createEvent = async (
   return result.rows[0];
 };
 
+const getEvent = async (
+  search: string | undefined
+): Promise<Event[]> => {
+  const result = await pool.query<Event>(
+    `SELECT * FROM events
+     WHERE title ILIKE $1 OR description ILIKE $1
+     ORDER BY created_at DESC`,
+    [`%${search ?? ""}%`]
+  );
+
+  return result.rows;
+};
 export const eventRepository = {
-    createEvent
+    createEvent,
+    getEvent
 }

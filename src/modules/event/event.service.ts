@@ -11,7 +11,13 @@ const CreateEventServiceFunction = async (payload: createEventSchemaType, userId
     return result;
 }
 
+const GetEventServiceFunction = async (search:string|undefined) => { 
+    const result = await eventRepository.getEvent(search);
+    return result;
+}
+
 
 export const eventService = {
-    CreateEventServiceFunction
+    CreateEventServiceFunction,
+    GetEventServiceFunction
 }

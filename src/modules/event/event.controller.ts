@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
 import { AppError } from "../../utils/AppError";
-import { createEventSchema } from "./event.schema";
+import { createEventSchema, eventQuerySchema } from "./event.schema";
 import { eventService } from "./event.service";
 
 interface ReqUser{
@@ -41,12 +41,12 @@ const EventCreateControllerFunction = async (req: Request, res: Response) => {
 }
 const EventGetControllerFunction = async (req: Request, res: Response) => {
     try {
-        const { search } = req.query;
+        const { search } = eventQuerySchema.parse(req.query);
         const result = await eventService.GetEventServiceFunction(search);
         sendResponse(res, {
             statusCode: 200,
             success: true,
-            message: "Event retrieved successfully",
+            message: "Events retrieved successfully",
             data: result,
         });
     } catch (error: any) {
@@ -60,5 +60,6 @@ const EventGetControllerFunction = async (req: Request, res: Response) => {
 }
 
 export const eventController = {
-    EventCreateControllerFunction
+    EventCreateControllerFunction,
+    EventGetControllerFunction
 }

@@ -108,8 +108,90 @@ const getUserBookings = async (
 
   return result.rows;
 };
+
+const cancelBooking = async (
+    bookingId: number,
+    userId: number
+): Promise<Booking | undefined> => {
+  const client = await pool.connect();
+
+    //? Transaction:
+    //? 1. lock the booking
+    //? 2. booking not found, not the owner and already cancelled resolved
+    //? 3. lock event and resolve existance and date passed
+    //? 4. cancel booking
+    //? 5. restore available_seats of that event
+  try {
+    await client.query("BEGIN");
+
+    const bookingResult = await client.query<Booking>(
+      `SELECT * FROM bookings
+       WHERE id = $1
+       FOR UPDATE`,
+      [bookingId]
+    );
+
+    const booking = bookingResult.rows[0];
+
+    if (!booking) {
+      throw new AppError("booking not found", 404);
+    }
+
+    if (booking.attendee_id !== userId) {
+      throw new AppError("booking belongs to another user", 403);
+    }
+
+    if (booking.status === "cancelled") {
+      throw new AppError("already cancelled", 409);
+    }
+
+    const eventResult = await client.query<Event>(
+      `SELECT * FROM events
+       WHERE id = $1
+       FOR UPDATE`,
+      [booking.event_id]
+    );
+
+    const event = eventResult.rows[0];
+
+    if (!event) {
+      throw new AppError("event not found", 404);
+    }
+
+    if (new Date(event.date).getTime() <= Date.now()) {
+      throw new AppError("event already passed", 400);
+    }
+
+    const updatedBooking = await client.query<Booking>(
+      `UPDATE bookings
+       SET status = 'cancelled',
+           updated_at = NOW()
+       WHERE id = $1
+       RETURNING *`,
+      [bookingId]
+    );
+
+    await client.query(
+      `UPDATE events
+       SET available_seats = available_seats + $1,
+           updated_at = NOW()
+       WHERE id = $2`,
+      [booking.tickets_booked, booking.event_id]
+    );
+
+    await client.query("COMMIT");
+
+    return updatedBooking.rows[0];
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+};
 export const bookingsRepository = {
     createBooking,
-    getUserBookings
+    getUserBookings,
+    cancelBooking
 }
 

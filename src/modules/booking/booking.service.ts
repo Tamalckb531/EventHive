@@ -18,7 +18,16 @@ const GetUserBookingsServiceFunction = async (
     return result;
 };
 
+const CancelBookingServiceFunction = async (
+  bookingId: number,
+  userId: number
+): Promise<Booking | undefined> => {
+  const result =  await bookingsRepository.cancelBooking(bookingId, userId);
+  return result
+};
+
 export const bookingsService = {
     CreateBookingServiceFunction,
-    GetUserBookingsServiceFunction
+    GetUserBookingsServiceFunction,
+    CancelBookingServiceFunction
 }
